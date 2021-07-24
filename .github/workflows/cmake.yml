@@ -27,7 +27,9 @@ jobs:
         
     - name: Get Git Tag
       id: get-git-tag
-      run: echo "::set-output name=git-tag::$(git describe --tags)"
+      run: |
+        echo "::set-output name=git-tag::$(git describe --tags)"
+        echo "Git Tag is ${{ steps.get-git-tag.outputs.git-tag }}"
       
     - name: Add gperf
       run: choco install gperf
