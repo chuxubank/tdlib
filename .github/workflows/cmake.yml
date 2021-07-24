@@ -25,7 +25,7 @@ jobs:
         repository: tdlib/td
     
     - name: Setup vcpkg
-      run: $env:VCPKG_INSTALLATION_ROOT/vcpkg.exe install openssl:x64-windows zlib:x64-windows
+      run: $env:VCPKG_INSTALLATION_ROOT\vcpkg.exe install openssl:x64-windows zlib:x64-windows
       
     - name: Install packages
       run: |
