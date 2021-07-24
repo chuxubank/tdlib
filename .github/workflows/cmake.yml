@@ -23,7 +23,10 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: tdlib/td
-        path: td
+        
+    - name: Get Git Tag
+      id: get-git-tag
+      run: echo "::set-output name=git-tag::$(git describe)"
       
     - name: Add gperf
       run: choco install gperf
@@ -49,8 +52,8 @@ jobs:
       
     - name: Release
       uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
       with:
         files: tdlib.zip
+        tag_name: ${{ steps.get-git-tag.outputs.git-tag }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
