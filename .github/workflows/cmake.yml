@@ -25,10 +25,15 @@ jobs:
         repository: tdlib/td
     
     - name: Setup vcpkg
-      run: C:\vcpkg\vcpkg.exe install openssl:x64-windows zlib:x64-windows
+      run: $env:VCPKG_INSTALLATION_ROOT/vcpkg.exe install openssl:x64-windows zlib:x64-windows
+      
+    - name: Install packages
+      run: |
+        choco install gperf
+        choco install php
 
     - name: Configure CMake
-      run: cmake -A x64 -B ${{github.workspace}}/build -DCMAKE_INSTALL_PREFIX:PATH=${{github.workspace}}/tdlib -DCMAKE_TOOLCHAIN_FILE:FILEPATH=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
+      run: cmake -A x64 -B ${{github.workspace}}/build -DCMAKE_INSTALL_PREFIX:PATH=${{github.workspace}}/tdlib -DCMAKE_TOOLCHAIN_FILE:FILEPATH=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake
 
     - name: Build
       # Build your program with the given configuration
