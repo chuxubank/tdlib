@@ -24,22 +24,23 @@ jobs:
       with:
         repository: tdlib/td
         fetch-depth: 0
-        
+
     - name: Get Git Tag
       id: get-git-tag
-      run: |
-        echo "::set-output name=git-tag::$(git describe --tags)"
-        echo "Git Tag is ${{ steps.get-git-tag.outputs.git-tag }}"
-      
+      run: echo "::set-output name=git-tag::$(git describe --tags)"
+ 
+    - name: Show Git Tag
+      run: echo "Git Tag is ${{ steps.get-git-tag.outputs.git-tag }}"
+
     - name: Add gperf
       run: choco install gperf
-    
+
     - name: Cache vcpkg
       uses: actions/cache@v2
       with:
         path: ~/AppData/Local/vcpkg/archives
         key: ${{ runner.os }}-vcpkg
-    
+
     - name: Setup vcpkg
       run: C:/vcpkg/vcpkg.exe install openssl:x64-windows zlib:x64-windows
 
@@ -49,10 +50,10 @@ jobs:
     - name: Build
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install
-      
+
     - name: Archive
       run: 7z a tdlib.zip ${{github.workspace}}/tdlib
-      
+
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
