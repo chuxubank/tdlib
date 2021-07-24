@@ -22,7 +22,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       with:
-        ref: tdlib/td
+        repository: tdlib/td
     
     - name: Setup vcpkg
       run: ${{env.VCPKG_INSTALLATION_ROOT}}/vcpkg.exe install openssl:x64-windows zlib:x64-windows
