@@ -1,0 +1,36 @@
+name: CMake
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally
+    # well on Windows or Mac.  You can convert this to a matrix build if you need
+    # cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: tdlib/td
+    
+    - name: Setup vcpkg
+      run: ${{env.VCPKG_INSTALLATION_ROOT}}/vcpkg.exe install openssl:x64-windows zlib:x64-windows
+
+    - name: Configure CMake
+      run: cmake -A x64 -B ${{github.workspace}}/build -DCMAKE_INSTALL_PREFIX:PATH=${{github.workspace}}/tdlib -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${{env.VCPKG_INSTALLATION_ROOT}}/scripts/buildsystems/vcpkg.cmake
+
+    - name: Build
+      # Build your program with the given configuration
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install
+      
