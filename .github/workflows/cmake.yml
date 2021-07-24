@@ -23,14 +23,19 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: tdlib/td
+        path: td
+      
+    - name: Add gperf
+      run: choco install gperf
+    
+    - name: Cache vcpkg
+      uses: actions/cache@v2
+      with:
+        path: ~/AppData/Local/vcpkg/archives
+        key: ${{ runner.os }}-vcpkg
     
     - name: Setup vcpkg
       run: C:/vcpkg/vcpkg.exe install openssl:x64-windows zlib:x64-windows
-      
-    - name: Install packages
-      run: |
-        choco install gperf
-        choco install php
 
     - name: Configure CMake
       run: cmake -A x64 -B ${{github.workspace}}/build -DCMAKE_INSTALL_PREFIX:PATH=${{github.workspace}}/tdlib -DCMAKE_TOOLCHAIN_FILE:FILEPATH=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
@@ -39,3 +44,13 @@ jobs:
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install
       
+    - name: Archive
+      run: 7z a tdlib.zip ${{github.workspace}}/tdlib
+      
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: tdlib.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
